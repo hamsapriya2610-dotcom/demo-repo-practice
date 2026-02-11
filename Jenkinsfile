@@ -28,9 +28,9 @@ pipeline {
         }
 stage('docker push') {
     steps {
+         script {
         withCredentials([string(credentialsId: 'dckrpsd', variable: 'dockerhubcredentialsdemo')]) {
-           script {
-                    withCredentials([string(credentialsId: 'dokerhubpasword', variable: 'dockerhubcredentialsdemo')]) {
+           
                         sh '''
                         docker login -u hamsapriya2610 -p ${dockerhubpsd}
                         docker image push hamsapriya2610 /demo-repo-practice:v.${BUILD_NUMBER}
@@ -38,14 +38,10 @@ stage('docker push') {
                         docker rmi hamsapriya2610 /demo-repo-practice:v.${BUILD_NUMBER}
                         '''
         }
-docker login -u hamsapriya2610 -p ${dockerhubcredentialsdemo}
 }
-        sh 'docker push hamsapriya2610/demo-repo-practice'
     }
 }
-}
-}
-  stage('Deploy Docker image') {
+stage('Deploy Docker image') {
             steps {
                 sh '''
                 docker ps -q -f name=shopping-container && docker stop shopping-container && docker rm shopping-container || echo "Container not found or already stopped."
@@ -56,12 +52,7 @@ docker login -u hamsapriya2610 -p ${dockerhubcredentialsdemo}
     }
 }
 
-post {
-    always {
-       cleanWs()
-        }
-    }
-        
+ 
 
 
     
