@@ -21,8 +21,8 @@ pipeline {
         }
     stage('docker build') {
         steps {
-            sh 'docker build -t demo-repo-practice .'
-            sh 'docker tag demo-repo-practice hamsapriya2610/demo-repo-practice'
+            sh 'docker build -t demo-repo-practice:v.${BUILD_NUMBER} .'
+            sh 'docker tag demo-repo-practice:v.${BUILD_NUMBER} hamsapriya2610/demo-repo-practice:v.${BUILD_NUMBER}'
 
 }
         }
@@ -32,10 +32,10 @@ stage('docker push') {
         withCredentials([string(credentialsId: 'dckrpsd', variable: 'dockerhubcredentialsdemo')]) {
            
                         sh '''
-                        docker login -u hamsapriya2610 -p ${dockerhubpsd}
-                        docker image push hamsapriya2610 /demo-repo-practice:v.${BUILD_NUMBER}
-                        docker rmi shopping:v.${BUILD_NUMBER}
-                        docker rmi hamsapriya2610 /demo-repo-practice:v.${BUILD_NUMBER}
+                        docker login -u hamsapriya2610 -p ${dockerhubcredentialsdemo}
+                        docker image push hamsapriya2610/demo-repo-practice:v.${BUILD_NUMBER}
+                        docker rmi demo-repo-practice:v.${BUILD_NUMBER}
+                        docker rmi hamsapriya2610/demo-repo-practice:v.${BUILD_NUMBER}
                         '''
         }
 }
@@ -44,17 +44,10 @@ stage('docker push') {
 stage('Deploy Docker image') {
             steps {
                 sh '''
-                docker ps -q -f name=shopping-container && docker stop shopping-container && docker rm shopping-container || echo "Container not found or already stopped."
-                docker run -d -p 8282:8282 --name shopping-container hamsapriya2610/demo-repo-practice:v.${BUILD_NUMBER}
+                docker ps -q -f name=shopping-container-demo && docker stop shopping-container-demo && docker rm shopping-container-demo || echo "Container not found or already stopped."
+                docker run -d -p 8282:8282 --name shopping-container-demo hamsapriya2610/demo-repo-practice:v.${BUILD_NUMBER}
                 '''
             }
         }
     }
 }
-
- 
-
-
-    
-
-
